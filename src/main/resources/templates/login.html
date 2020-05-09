@@ -64,7 +64,8 @@
             <br>
             <input type="password" name="bb" placeholder="密码"/>
             <br>
-            <button type="submit" class="btn" onclick="submitForm()">登 &nbsp;&nbsp; 录</button>
+            <button type="button" class="btn" onclick="submitForm()">登 &nbsp;&nbsp; 录</button>
+            <label id="tips"></label>
             <br/>
             <input type="checkbox" name="remember-me" value="true"/>记住我
         </form>
@@ -72,7 +73,7 @@
 </div>
 </body>
 
-<script type="javascript">
+<script type="text/javascript">
     //提交
     function submitForm(){
         /*var username = $("#username").val();
@@ -89,16 +90,16 @@
             return;
         }*/
         var data = $("#loginForm").serialize();
-        console.log(data);
         $.ajax({
-            url : "/login",
+            url : "login",
             type : 'POST',
             data : data,
             success : function(data) {
+                alert(data.success+"-"+data.msg);
                 if (data.success) {
-                    window.location.href = "index.html";
+                    window.location.href = "www.baidu.com";
                 } else {
-                    alert(data);
+                    $("#tips").text(data.msg);
                 }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
