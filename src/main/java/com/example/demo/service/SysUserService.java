@@ -1,16 +1,21 @@
 package com.example.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.demo.config.MyPasswordEncoder;
 import com.example.demo.dao.SysUserDao;
 import com.example.demo.pojo.SysRole;
 import com.example.demo.pojo.SysUser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -39,10 +44,9 @@ public class SysUserService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try {
             SysUser sysUser = sysUserDao.getSysUserInfo(username);
             if (sysUser == null){
-                return null;
+                throw new UsernameNotFoundException("用户名或密码错误");
             }
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             for (SysRole sysRole : sysUser.getRoles()){
@@ -53,11 +57,7 @@ public class SysUserService implements UserDetailsService{
             System.out.println(authorities);
 
             /*User user = new User(sysUser.getAccount(),"{noop}"+sysUser.getPassword(),authorities);*/
-            return new User(sysUser.getAccount(),sysUser.getPassword(),authorities);
-        }catch (Exception e){
-            log.error("error");
-            return null;
-        }
-
+            User user = new User(sysUser.getAccount(),"{MD5}"+sysUser.getPassword(),authorities);
+            return user;
     }
 }

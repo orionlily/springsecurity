@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
-    <!--<link th:href="@{css/login.css}" type="text/css" rel="stylesheet">-->
-    <link href="css/login.css" type="text/css" rel="stylesheet">
+    <link th:href="@{/css/login.css}" type="text/css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!--<link href="css/login.css" type="text/css" rel="stylesheet">-->
+   <!-- <script src="js/jquery.min.js" type="text/javascript"/>-->
 </head>
 
 <style>
@@ -57,15 +59,51 @@
 <div class="login-container">
     <div class="form-container">
         <p class="aaa">用户登录</p>
-        <form name="loginForm" method="post" action="login">
+        <form id="loginForm">
             <input type="text" name="aa" placeholder="用户名"/>
             <br>
             <input type="password" name="bb" placeholder="密码"/>
             <br>
-            <button type="submit" class="btn">登 &nbsp;&nbsp; 录</button>
+            <button type="submit" class="btn" onclick="submitForm()">登 &nbsp;&nbsp; 录</button>
             <br/>
             <input type="checkbox" name="remember-me" value="true"/>记住我
         </form>
     </div>
 </div>
 </body>
+
+<script type="javascript">
+    //提交
+    function submitForm(){
+        /*var username = $("#username").val();
+        var password = $("#hidePswInput").val();
+        var imgCode = $("#imgCode").val();
+        if(username==""||username=="请输入账号"){
+            $("#loginTip").html("请输入账号");
+            return;
+        }else if(password==""||password=="请输入密码"){
+            $("#loginTip").html("请输入密码");
+            return;
+        }else if(imgCode==""||imgCode=="请输入验证码"){
+            $("#loginTip").html("请输入验证码");
+            return;
+        }*/
+        var data = $("#loginForm").serialize();
+        console.log(data);
+        $.ajax({
+            url : "/login",
+            type : 'POST',
+            data : data,
+            success : function(data) {
+                if (data.success) {
+                    window.location.href = "index.html";
+                } else {
+                    alert(data);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                $("#loginTip").html("登录异常,请联系管理人员");
+            }
+        });
+    }
+</script>

@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 /**
  * @author li.lc
@@ -23,7 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+        //默认
+        return new MyPasswordEncoder();
     }
 
     @Override
@@ -39,7 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin()
                 .loginPage("/loginPage").loginProcessingUrl("/login").defaultSuccessUrl("/index")
-                .failureUrl("/errorPage").usernameParameter("aa").passwordParameter("bb")
+                .failureHandler(customFailureHandler())
+                .usernameParameter("aa").passwordParameter("bb")
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/loginPage").invalidateHttpSession(true)
                 .and()
@@ -57,8 +60,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .mvcMatchers("/world")
                 .antMatchers("/css/**")
+                .antMatchers("/js/**")
                 .antMatchers("/**.ico")
         ;
+    }
+
+    @Bean
+    public AuthenticationFailureHandler customFailureHandler(){
+        return new Fail();
     }
 
     public static void main(String[] args) {
