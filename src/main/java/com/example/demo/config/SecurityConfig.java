@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * @author li.lc
@@ -40,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin()
-                .loginPage("/loginPage").loginProcessingUrl("/login").defaultSuccessUrl("/index")
+                .loginPage("/loginPage").loginProcessingUrl("/login").successHandler(customSuccessHandler()).defaultSuccessUrl("/index")
                 .failureHandler(customFailureHandler())
                 .usernameParameter("aa").passwordParameter("bb")
                 .and()
@@ -68,6 +69,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationFailureHandler customFailureHandler(){
         return new Fail();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler customSuccessHandler(){
+        return new Succ();
     }
 
     public static void main(String[] args) {
